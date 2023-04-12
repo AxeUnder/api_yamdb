@@ -1,6 +1,23 @@
 from django.db import models
 
 
+# Пока создал пустые шаблоны моделей
+class Category(models.Model):
+    pass
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+
+class Genre(models.Model):
+    pass
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+
 class Title(models.Model):
     name = models.CharField(
         max_length=256,
@@ -34,12 +51,3 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-
-
-# Пока создал пустые шаблоны моделей
-class Category(models.Model):
-    pass
-
-
-class Genre(models.Model):
-    pass

@@ -5,9 +5,15 @@ from reviews.models import Category, Genre, Title
 
 
 class TitleAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'year', 'description', 'category', 'genre')
-    list_editable = ('text',)
-    search_fields = ('text',)
+    list_display = (
+        'pk',
+        'name',
+        'year',
+        'description',
+        'category',
+    )
+    list_editable = ('description',)
+    search_fields = ('name',)
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -19,5 +25,5 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Title, TitleAdmin)
-admin.site.register(Category, CategoryeAdmin)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
