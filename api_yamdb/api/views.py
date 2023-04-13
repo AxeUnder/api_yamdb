@@ -19,7 +19,6 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet модели Review."""
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     pagination_class = pagination.LimitOffsetPagination
 
