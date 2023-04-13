@@ -59,7 +59,6 @@ class Review(models.Model):
         Title,
         'Произведение',
         on_delete=models.CASCADE,
-        # Пока под ?
         related_name='reviews'
     )
     text = models.TextField(
@@ -71,7 +70,6 @@ class Review(models.Model):
         User,
         'Автор',
         on_delete=models.CASCADE,
-        # И это тоже?
         related_name='reviews'
     )
     score = models.IntegerField(
