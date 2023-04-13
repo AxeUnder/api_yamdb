@@ -51,3 +51,42 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+
+
+class Review(models.Model):
+    """Модель отзывов."""
+    title = models.ForeignKey(
+        Title,
+        'Произведение',
+        on_delete=models.CASCADE,
+        # Пока под ?
+        related_name='reviews'
+    )
+    text = models.TextField(
+        'Текст отзыва',
+        blank=False,
+        null=False
+    )
+    author = models.ForeignKey(
+        User,
+        'Автор',
+        on_delete=models.CASCADE,
+        # И это тоже?
+        related_name='reviews'
+    )
+    score = models.IntegerField(
+        'Оценка',
+        blank=False,
+        null=False
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+
+    def __str__(self):
+        return self.text
