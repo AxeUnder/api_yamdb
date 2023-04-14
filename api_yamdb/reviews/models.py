@@ -1,4 +1,19 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+
+SCORE_CHOICES = (
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10)
+)
 
 
 # Пока создал пустые шаблоны моделей
@@ -64,7 +79,8 @@ class Review(models.Model):
     text = models.TextField(
         'Текст отзыва',
         blank=False,
-        null=False
+        null=False,
+        help_text='Напишите свой отзыв.'
     )
     author = models.ForeignKey(
         User,
@@ -75,7 +91,9 @@ class Review(models.Model):
     score = models.IntegerField(
         'Оценка',
         blank=False,
-        null=False
+        null=False,
+        choices=SCORE_CHOICES,
+        help_text='Дайте оценку произведению.'
     )
     pub_date = models.DateTimeField(
         'Дата публикации',
