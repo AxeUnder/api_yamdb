@@ -30,7 +30,6 @@ class TitleAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-
 class CategoryAdmin(admin.ModelAdmin):
     """Админ-модель категорий."""
     pass
