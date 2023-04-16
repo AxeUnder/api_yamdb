@@ -1,7 +1,7 @@
 from rest_framework import filters, viewsets, pagination
 from rest_framework.generics import get_object_or_404
 
-from reviews.models import Title, Category, Genre, Review
+from reviews.models import Title, Category, Genre, Review, Comment
 
 
 # пока создал пустые шаблоны вьюсетов
@@ -30,4 +30,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(
             author=self.request.user,
             title=get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        )
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """ViewSet модели Comment."""
+    serializer_class = CommentSerializer
+    pagination_class = pagination.LimitOffsetPagination
+
+    def get_queryset(self):
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        return review.comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user,
+            review=get_object_or_404(Title, id=self.kwargs.get('review_id'))
         )
