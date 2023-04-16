@@ -67,6 +67,9 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
+    def __str__(self):
+        return self.name
+
 
 class Review(models.Model):
     """Модель отзывов."""
@@ -103,38 +106,6 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-
-    def __str__(self):
-        return self.text
-
-
-class Comment(models.Model):
-    """Модель комментариев."""
-    review = models.ForeignKey(
-        Review,
-        'Отзыв',
-        on_delete=models.CASCADE,
-        related_name='comments'
-    )
-    text = models.TextField(
-        'Текст комментария',
-        blank=False,
-        null=False
-    )
-    author = models.ForeignKey(
-        User,
-        'Автор',
-        on_delete=models.CASCADE,
-        related_name='comments'
-    )
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
-
-    class Meta:
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         return self.text
