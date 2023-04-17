@@ -1,6 +1,8 @@
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import datetime
 
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from users.models import User
 
 SCORE_CHOICES = (
     (1, 1),
@@ -12,25 +14,34 @@ SCORE_CHOICES = (
     (7, 7),
     (8, 8),
     (9, 9),
-    (10, 10)
+    (10, 10),
 )
 
 
-# Пока создал пустые шаблоны моделей
 class Category(models.Model):
-    pass
+    name = models.CharField('Название', max_length=256)
+    slug = models.SlugField(unique=True, max_length=50)
 
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+        ordering = ('slug',)
+
+    def __str__(self):
+        return self.slug
 
 
 class Genre(models.Model):
-    pass
+    name = models.CharField('Название', max_length=50)
+    slug = models.SlugField(unique=True)
 
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
+        ordering = ('slug',)
+
+    def __str__(self):
+        return self.slug
 
 
 class Title(models.Model):
@@ -44,6 +55,16 @@ class Title(models.Model):
         verbose_name='Год выпуска',
         blank=True,
         null=True,
+        validators=[
+            MaxValueValidator(
+                datetime.now().year,
+                'Нельзя добавлять произведения, которые еще не вышли.',
+            ),
+            MinValueValidator(
+                1,
+                'Нельзя добавлять произведения, с годом меньше 1.',
+            ),
+        ],
     )
     description = models.TextField(
         verbose_name='Описание',
@@ -73,35 +94,33 @@ class Title(models.Model):
 
 class Review(models.Model):
     """Модель отзывов."""
+
     title = models.ForeignKey(
         Title,
-        'Произведение',
         on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        verbose_name='Произведение',
     )
     text = models.TextField(
         'Текст отзыва',
         blank=False,
         null=False,
-        help_text='Напишите свой отзыв.'
+        help_text='Напишите свой отзыв.',
     )
     author = models.ForeignKey(
         User,
-        'Автор',
         on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        verbose_name='Автор',
     )
     score = models.IntegerField(
         'Оценка',
         blank=False,
         null=False,
         choices=SCORE_CHOICES,
-        help_text='Дайте оценку произведению.'
+        help_text='Дайте оценку произведению.',
     )
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
         verbose_name = 'Отзыв'
@@ -113,27 +132,21 @@ class Review(models.Model):
 
 class Comment(models.Model):
     """Модель комментариев."""
+
     review = models.ForeignKey(
         Review,
-        'Отзыв',
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
+        verbose_name='Отзыв',
     )
-    text = models.TextField(
-        'Текст комментария',
-        blank=False,
-        null=False
-    )
+    text = models.TextField('Текст комментария', blank=False, null=False)
     author = models.ForeignKey(
         User,
-        'Автор',
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
+        verbose_name='Автор',
     )
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
         verbose_name = 'Комментарий'
