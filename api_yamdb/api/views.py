@@ -1,21 +1,35 @@
-from rest_framework import filters, viewsets, pagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, pagination, viewsets
 from rest_framework.generics import get_object_or_404
 
-from reviews.models import Title, Category, Genre, Review, Comment
+from api.mixins import CreateListViewSet
+from api.permissions import AdminOrReadOnly
+from api.serializers import (
+    CategorySerializer, CommentSerializer, GenreSerializer, ReviewSerializer,
+    TitleSerializer,
+)
+from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = (AdminOrReadOnly,)
+    pagination_class = pagination.LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateListViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (AdminOrReadOnly,)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CreateListViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (AdminOrReadOnly,)
+
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
