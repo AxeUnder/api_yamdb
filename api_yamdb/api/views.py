@@ -14,7 +14,6 @@ from reviews.models import Category, Comment, Genre, Review, Title
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (AdminOrReadOnly,)
     pagination_class = pagination.LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
 
@@ -29,7 +28,6 @@ class GenreViewSet(CreateListViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
-
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -51,7 +49,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet модели Comment."""
-
     serializer_class = CommentSerializer
     pagination_class = pagination.LimitOffsetPagination
 
