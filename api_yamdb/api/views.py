@@ -1,18 +1,22 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, pagination, viewsets, status, permissions
 from rest_framework.generics import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from django.db import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 
 from api.mixins import CreateListViewSet
-from api.permissions import AdminOrReadOnly
+from api.permissions import (
+    AdminOrReadOnly, IsAdmin,
+    AdminOrModerOrUserOrReadOnly
+)
 from api.serializers import (
     CategorySerializer, CommentSerializer, GenreSerializer, ReviewSerializer,
     TitleSerializer, TokenSerializer, UserSerializer, UserSignUpSerializer,
@@ -47,6 +51,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, AdminOrReadOnly)
     pagination_class = pagination.LimitOffsetPagination
+    permission_classes = (AdminOrModerOrUserOrReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -85,8 +90,11 @@ def sign_up(request):
         user, created = User.objects.get_or_create(
             **serializer.validated_data
         )
-    except:
-        raise ValidationError('Попробуй другой email')
+    except IntegrityError:
+        return Response(
+            'Попробуй другой email или username',
+            status=status.HTTP_400_BAD_REQUEST
+        )
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         'Token Token Token',
@@ -121,11 +129,16 @@ class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
-    lookup_field = 'username'.lower()
+    permission_classes = (IsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     @action(
         methods=['get', 'patch'],
-        detail=False
+        detail=False,
+        permission_classes=(IsAuthenticated,),
     )
     def me(self, request):
         user = get_object_or_404(User, username=self.request.user)
@@ -140,3 +153,15 @@ class UsersViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            User.objects.get_or_create(**serializer.validated_data)
+            return Response(serializer.validated_data,
+                            status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response(
+                'Попробуй другой email или username',
+                status=status.HTTP_400_BAD_REQUEST)

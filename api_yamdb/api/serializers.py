@@ -90,9 +90,18 @@ class TokenSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.RegexField(max_length=150,
                                       regex=r'^[\w.@+-]+\Z',
-                                      required=True)
+                                      required=True
+                                      )
     email = serializers.EmailField(max_length=150,
-                                   required=True)
+                                   required=True,
+                                   )
+
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError(
+                'Username "me" запрещён к использованию'
+            )
+        return value
 
     class Meta:
         model = User
@@ -109,6 +118,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserEditSerializer(serializers.ModelSerializer):
+    username = serializers.RegexField(max_length=150,
+                                      regex=r'^[\w.@+-]+\Z',
+                                      required=True)
+    email = serializers.EmailField(max_length=150,
+                                   required=True)
 
     class Meta:
         model = User
