@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, pagination, viewsets, status
+from rest_framework import filters, pagination, viewsets, status, permissions
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
@@ -45,6 +45,7 @@ class GenreViewSet(CreateListViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet модели Review."""
     serializer_class = ReviewSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AdminOrReadOnly)
     pagination_class = pagination.LimitOffsetPagination
 
     def get_queryset(self):
@@ -61,6 +62,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet модели Comment."""
     serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AdminOrReadOnly)
     pagination_class = pagination.LimitOffsetPagination
 
     def get_queryset(self):
@@ -72,6 +74,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             review=get_object_or_404(Title, id=self.kwargs.get('review_id')),
         )
+
 
 @api_view(['POST'])
 def sign_up(request):
