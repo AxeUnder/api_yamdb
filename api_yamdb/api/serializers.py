@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from users.models import User
 
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,11 +23,28 @@ class GenreSerializer(serializers.ModelSerializer):
         )
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True, many=False)
-    genre = GenreSerializer(read_only=True, many=True)
+class TitleSerializerRead(serializers.ModelSerializer):
+    category = CategorySerializer(many=False, read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    rating = serializers.FloatField(read_only=True)
 
-    # продолжение следует ..
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+
+class TitleSerializerWrite(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        read_only=False,
+        queryset=Category.objects.all(),
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        read_only=False,
+        queryset=Genre.objects.all(),
+        many=True,
+    )
 
     class Meta:
         model = Title
@@ -36,13 +53,10 @@ class TitleSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Serializer модели Review."""
-    title = serializers.SlugRelatedField(
-        slug_field='title_id',
-        read_only=True
-    )
+
+    title = serializers.SlugRelatedField(slug_field='title_id', read_only=True)
     author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True
+        slug_field='username', read_only=True
     )
 
     class Meta:
@@ -52,13 +66,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer модели Comment."""
+
     review = serializers.SlugRelatedField(
-        slug_field='review_id',
-        read_only=True
+        slug_field='review_id', read_only=True
     )
     author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True
+        slug_field='username', read_only=True
     )
 
     class Meta:
@@ -68,11 +81,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSignUpSerializer(serializers.Serializer):
-    username = serializers.RegexField(max_length=150,
-                                      regex=r'^[\w.@+-]+\Z',
-                                      required=True)
-    email = serializers.EmailField(max_length=150,
-                                   required=True)
+    username = serializers.RegexField(
+        max_length=150, regex=r'^[\w.@+-]+\Z', required=True
+    )
+    email = serializers.EmailField(max_length=150, required=True)
 
     def validate_username(self, value):
         if value.lower() == 'me':
@@ -83,18 +95,19 @@ class UserSignUpSerializer(serializers.Serializer):
 
 
 class TokenSerializer(serializers.Serializer):
-    username = serializers.RegexField(max_length=150,
-                                      regex=r'^[\w.@+-]+\Z', required=True)
+    username = serializers.RegexField(
+        max_length=150, regex=r'^[\w.@+-]+\Z', required=True
+    )
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.RegexField(max_length=150,
-                                      regex=r'^[\w.@+-]+\Z',
-                                      required=True
-                                      )
-    email = serializers.EmailField(max_length=150,
-                                   required=True,
-                                   )
+    username = serializers.RegexField(
+        max_length=150, regex=r'^[\w.@+-]+\Z', required=True
+    )
+    email = serializers.EmailField(
+        max_length=150,
+        required=True,
+    )
 
     def validate_username(self, value):
         if value.lower() == 'me':
@@ -105,31 +118,35 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username',
-                  'email',
-                  'first_name',
-                  'last_name',
-                  'bio',
-                  'role')
-        validators = [UniqueTogetherValidator(
-            queryset=User.objects.all(),
-            fields=('username', 'email')
-        )]
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=User.objects.all(), fields=('username', 'email')
+            )
+        ]
 
 
 class UserEditSerializer(serializers.ModelSerializer):
-    username = serializers.RegexField(max_length=150,
-                                      regex=r'^[\w.@+-]+\Z',
-                                      required=True)
-    email = serializers.EmailField(max_length=150,
-                                   required=True)
+    username = serializers.RegexField(
+        max_length=150, regex=r'^[\w.@+-]+\Z', required=True
+    )
+    email = serializers.EmailField(max_length=150, required=True)
 
     class Meta:
         model = User
-        fields = ('username',
-                  'email',
-                  'first_name',
-                  'last_name',
-                  'bio',
-                  'role')
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
         read_only_fields = ('role',)
