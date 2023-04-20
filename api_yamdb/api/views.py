@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 from api.mixins import CreateListViewSet
-from .permissions import (
+from api.permissions import (
     AdminOrModerOrUserOrReadOnly,
     AdminOrReadOnly,
     IsAdmin,
@@ -78,9 +78,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     serializer_class = ReviewSerializer
     permission_classes = (
-        # permissions.IsAuthenticatedOrReadOnly, # закомментировал, т.к. такого пермишена у нас нет
-        AdminOrReadOnly |
-        IsAuthorOrReadOnlyPermission,
+        AdminOrReadOnly,
         AdminOrModerOrUserOrReadOnly,
     )
     pagination_class = LimitOffsetPagination
@@ -100,12 +98,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet модели Comment."""
 
     serializer_class = CommentSerializer
-    permission_classes = (
-        # permissions.IsAuthenticatedOrReadOnly, # закомментировал, т.к. такого пермишена у нас нет
-        AdminOrReadOnly |
-        IsAuthorOrReadOnlyPermission,
-        AdminOrModerOrUserOrReadOnly,
-    )
+    permission_classes = (AdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):

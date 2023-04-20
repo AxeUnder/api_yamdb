@@ -9,5 +9,7 @@ api_yamdb
 - Pillow 9.3.0
 - PyJWT 2.1.0
 
-# Примеры
-
+# Запуск management команды по импорту csv Файлов
+```
+py manage.py import_csv
+``` 

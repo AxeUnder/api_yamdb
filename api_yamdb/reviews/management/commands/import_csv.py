@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for model, csv_files in ModelsCSV.items():
             model.objects.all().delete()
-            path_to_file = f'{settings.CSV_DIR}\data\{csv_files}'
+            path_to_file = f'{settings.CSV_DIR}/data/{csv_files}'
             print(f'Начат импорт данных из файла {path_to_file}')
             with open(
                 path_to_file,
