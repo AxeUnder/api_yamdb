@@ -1,7 +1,7 @@
 import os
-from pathlib import Path
-from datetime import timedelta
 
+from datetime import timedelta
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'api',
-    'django_filters'
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +109,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+# CSV_DIR = os.path.join(BASE_DIR, 'static/data/')
+
+CSV_DIR = os.path.join(BASE_DIR, 'static')
 
 AUTH_USER_MODEL = 'users.User'
 
