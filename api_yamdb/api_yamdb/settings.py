@@ -110,8 +110,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
-# CSV_DIR = os.path.join(BASE_DIR, 'static/data/')
-
 CSV_DIR = os.path.join(BASE_DIR, 'static')
 
 AUTH_USER_MODEL = 'users.User'
