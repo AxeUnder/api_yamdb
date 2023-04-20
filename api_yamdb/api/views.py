@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status, viewsets, permissions
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
@@ -14,10 +14,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 from api.mixins import CreateListViewSet
-from api.permissions import (
+from .permissions import (
     AdminOrModerOrUserOrReadOnly,
     AdminOrReadOnly,
     IsAdmin,
+    IsAuthorOrReadOnlyPermission
 )
 from api.serializers import (
     CategorySerializer,
@@ -78,7 +79,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         # permissions.IsAuthenticatedOrReadOnly, # закомментировал, т.к. такого пермишена у нас нет
-        AdminOrReadOnly,
+        AdminOrReadOnly |
+        IsAuthorOrReadOnlyPermission,
         AdminOrModerOrUserOrReadOnly,
     )
     pagination_class = LimitOffsetPagination
@@ -100,7 +102,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         # permissions.IsAuthenticatedOrReadOnly, # закомментировал, т.к. такого пермишена у нас нет
-        AdminOrReadOnly,
+        AdminOrReadOnly |
+        IsAuthorOrReadOnlyPermission,
+        AdminOrModerOrUserOrReadOnly,
     )
     pagination_class = LimitOffsetPagination
 
@@ -111,7 +115,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             author=self.request.user,
-            review=get_object_or_404(Title, id=self.kwargs.get('review_id')),
+            review=get_object_or_404(Review, id=self.kwargs.get('review_id')),
         )
 
 

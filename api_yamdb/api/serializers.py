@@ -54,30 +54,52 @@ class TitleSerializerWrite(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     """Serializer модели Review."""
 
-    title = serializers.SlugRelatedField(slug_field='title_id', read_only=True)
+    title = serializers.SlugRelatedField(
+        slug_field='id',
+        queryset=Title.objects.all(),
+        required=False
+    )
     author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True
+        read_only=True, slug_field='username'
     )
 
     class Meta:
         model = Review
         fields = '__all__'
 
+    def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
+
+        title_id = self.context['view'].kwargs.get('title_id')
+        author = self.context['request'].user
+        if Review.objects.filter(
+                author=author, title=title_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже оставляли отзыв к этому произведению.'
+            )
+        return data
+
+    def validate_score(self, value):
+        if not 1 <= value <= 10:
+            raise serializers.ValidationError(
+                'Дайте оценку в диапазоне от 1 до 10.'
+            )
+        return value
+
 
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer модели Comment."""
 
-    review = serializers.SlugRelatedField(
-        slug_field='review_id', read_only=True
-    )
     author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True
+        default=serializers.CurrentUserDefault(),
+        read_only=True,
+        slug_field='username'
     )
 
     class Meta:
         model = Comment
-        fields = '__all__'
-        read_only_fields = ('pub_date',)
+        exclude = ('review',)
 
 
 class UserSignUpSerializer(serializers.Serializer):
