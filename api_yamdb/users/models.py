@@ -52,11 +52,27 @@ class User(AbstractUser):
         default=USER,
         choices=CHOICES_ROLE,
     )
+    confirmation_code = models.CharField(
+        max_length=32,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = _('Пользователь')
         verbose_name_plural = _('Пользователи')
         ordering = ('id',)
+
+    @property
+    def is_user(self):
+        return self.role == self.USER
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_superuser or self.is_staff
 
     def __str__(self) -> str:
         return self.username

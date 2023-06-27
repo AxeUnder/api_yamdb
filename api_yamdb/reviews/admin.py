@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Genre, Review, Title
+from .models import Category, Genre, Review, Title, Comment
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -16,6 +16,20 @@ class ReviewAdmin(admin.ModelAdmin):
     )
     list_fields = ('title', 'text', 'author')
     list_editable = ('score',)
+    list_filter = ('pub_date',)
+
+
+class CommentAdmin(admin.ModelAdmin):
+    """Админ-модель комментариев."""
+
+    list_display = (
+        'pk',
+        'review',
+        'text',
+        'author',
+        'pub_date',
+    )
+    list_fields = ('review', 'text', 'author')
     list_filter = ('pub_date',)
 
 
@@ -60,6 +74,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Review, ReviewAdmin)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
