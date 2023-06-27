@@ -96,7 +96,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet модели Comment."""
-
     serializer_class = CommentSerializer
     permission_classes = (AdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
