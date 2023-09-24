@@ -3,7 +3,7 @@
 Это api-приложение, которое позволяет отправлять запросы (GET, POST, PATCH и DELETE) на сервер к базе данных для изменения записей о произведениях, их рейтинга и отзывов с комментариями к ним.
 Можно запросить список произведений, пользователей, отзывов или авторизовавшись опубликовать собственный и дать оценку произведению.
 
-**Использованные технологии:** #Python #Django #Djangorestframework #Djangorestframework-simplejwt #Pillow #PyJWT #django-filter #isort #requests
+**Использованные технологии:** #Python #Django #Django-rest-framework #Django-rest-framework-simplejwt #Pillow #PyJWT #Django-filter #Isort #Requests
 
 ## Примеры запросов
 Регистрация нового пользователя:
