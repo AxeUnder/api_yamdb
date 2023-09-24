@@ -3,22 +3,9 @@
 Это api-приложение, которое позволяет отправлять запросы (GET, POST, PATCH и DELETE) на сервер к базе данных для изменения записей о произведениях, их рейтинга и отзывов с комментариями к ним.
 Можно запросить список произведений, пользователей, отзывов или авторизовавшись опубликовать собственный и дать оценку произведению.
 
-api_yamdb
+**Использованные технологии:** #Python #Django #Djangorestframework #Djangorestframework-simplejwt #Pillow #PyJWT #django-filter #isort #requests
 
-# Использованные технологии
-- Python 3.9
-- Django 3.2.16
-- djangorestframework 3.12.4
-- djangorestframework-simplejwt 4.7.2
-- Pillow 9.3.0
-- PyJWT 2.1.0
-- django-filter 23.1
-- isort 5.12.0
-- requests 2.26.0
-
-
-# Примеры запросов
-
+## Примеры запросов
 Регистрация нового пользователя:
 **POST** `/api/v1/auth/signup/`
 ```json
@@ -66,14 +53,12 @@ api_yamdb
 **GET** `/redoc/`
 
 
-# Запуск management команды по импорту csv Файлов
+## Запуск management команды по импорту csv Файлов
 ```bash
 py manage.py import_csv
 ``` 
 
-
-# Запуск проекта на Windows OS
-
+## Запуск проекта на Windows OS
 Клонировать репозиторий и перейти в него в командной строке:
 ```bash
 git clone https://github.com/lioleg/api_yamdb.git
@@ -102,3 +87,9 @@ python manage.py migrate
 cd api_yambd
 python manage.py runserver
 ```
+
+## Об авторах
+Python-разработчики
+>[AxeUnder](https://github.com/AxeUnder),
+>[Khatkovskii](https://github.com/Khatkovskii),
+>[lioleg](https://github.com/lioleg).
